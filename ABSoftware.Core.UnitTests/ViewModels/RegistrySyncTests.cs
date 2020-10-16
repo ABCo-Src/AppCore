@@ -19,7 +19,7 @@ namespace ABSoftware.Core.UnitTests.ViewModels
         [TestInitialize]
         public void SetupRegistry()
         {
-            ABSRegistry.LoadedSegments.Clear();
+            //ABSRegistry.LoadedSegments.Clear();
 
             var newSegment = new RegSegment();
 
@@ -31,7 +31,7 @@ namespace ABSoftware.Core.UnitTests.ViewModels
             BooleanGroupItem.SetItem(5, true);
             BooleanGroupItem.SetItem(6, false);
 
-            ABSRegistry.LoadedSegments.Add("abc", newSegment);
+            //ABSRegistry.LoadedSegments.Add("abc", newSegment);
             newSegment.AddItem("stringItm", StringItem);
             newSegment.AddItem("integerItm", IntegerItem);
             newSegment.AddItem("decimalItm", DecimalItem);

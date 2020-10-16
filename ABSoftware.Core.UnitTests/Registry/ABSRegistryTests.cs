@@ -14,7 +14,7 @@ namespace ABSoftware.Core.UnitTests.Registry
         public unsafe void GetSegment_NotAlias_Valid()
         {
             var newSegment = new RegSegment();
-            ABSRegistry.LoadedSegments.Add("abc", newSegment);
+            //ABSRegistry.LoadedSegments.Add("abc", newSegment);
             char* ch = stackalloc char[4];
             Assert.IsTrue(ABSRegistry.GetSegment("abc:", ch, out int pos, out RegSegment segment));
 
@@ -26,7 +26,7 @@ namespace ABSoftware.Core.UnitTests.Registry
         public unsafe void GetSegment_Alias_Valid()
         {
             var newSegment = new RegSegment();
-            ABSRegistry.SegmentAliases.Add("abc", newSegment);
+            //ABSRegistry.SegmentAliases.Add("abc", newSegment);
             char* ch = stackalloc char[4];
             Assert.IsTrue(ABSRegistry.GetSegment("$abc:", ch, out int pos, out RegSegment segment));
 

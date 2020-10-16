@@ -1,14 +1,17 @@
 ﻿using ABSoftware.Core.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace ABSoftware.Core.Registry
 {
     public static class ABSRegistry
     {
-        public static Dictionary<string, RegSegment> LoadedSegments = new Dictionary<string, RegSegment>();
-        public static Dictionary<string, RegSegment> SegmentAliases = new Dictionary<string, RegSegment>();
+        static readonly Dictionary<string, RegSegment> LoadedSegments = new Dictionary<string, RegSegment>();
+
+        public static bool SegmentExists(string segmentName) => Directory.Exists(Path.Combine(ABSGlobal.RegistrySegmentsDirectory, segmentName));
+        public static void AddSegment(string segmentName, RegSegment segment) => LoadedSegments.Add(segmentName, segment);
 
         #region Path Access
 
@@ -55,13 +58,6 @@ namespace ABSoftware.Core.Registry
             segment = null;
             if (path.Length == 0) return false;
 
-            bool isAlias = false;
-            if (path[0] == '$')
-            {
-                pos++;
-                isAlias = true;
-            }
-
             // Get the section's name.
             char* currentBuffer = buffer;
             for (; pos < path.Length; pos++)
@@ -69,7 +65,7 @@ namespace ABSoftware.Core.Registry
                 if (path[pos] == ':')
                 {
                     pos++;
-                    return GetSegmentByName(new string(buffer, 0, (int)(currentBuffer - buffer)), isAlias, out segment);
+                    return GetSegmentByName(new string(buffer, 0, (int)(currentBuffer - buffer)), out segment);
                 }
                 else *currentBuffer++ = path[pos];
             }
@@ -78,11 +74,7 @@ namespace ABSoftware.Core.Registry
             return false;
         }
 
-        static unsafe bool GetSegmentByName(string segmentName, bool isAlias, out RegSegment segment)
-        {
-            if (isAlias) return SegmentAliases.TryGetValue(segmentName, out segment);
-            else return LoadedSegments.TryGetValue(segmentName, out segment);
-        }
+        public static bool GetSegmentByName(string path, out RegSegment segment) => LoadedSegments.TryGetValue(path, out segment);
 
         #endregion
 
