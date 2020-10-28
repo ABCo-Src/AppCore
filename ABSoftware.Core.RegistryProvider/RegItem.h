@@ -35,9 +35,27 @@ public:
 	}
 };
 
+class RegGroupLookup
+{
+public:
+	bool IsLoaded;
+
+	union
+	{
+		int UnloadedFilePosition;
+		int LoadedPosition;
+	};
+
+	RegGroupLookup(int unloadedFilePosition)
+	{
+		IsLoaded = false;
+		UnloadedFilePosition = unloadedFilePosition;
+	}
+};
+
 class RegGroup
 {
 public:
-	std::vector<RegItem*> SubItems;
-	std::vector<RegGroup*> SubGroups;
+	std::vector<int> SubItems;
+	std::vector<int> SubGroups;
 };

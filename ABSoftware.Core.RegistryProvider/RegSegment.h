@@ -3,13 +3,16 @@
 #include <iostream>
 #include <fstream>
 #include "RegItem.h"
+#include "FixedPositionVector.h"
 
-class RegSegment : RegGroup
+class RegSegment
 {
+	// NOTE: See the explanation in "Segment Handler" to understand the role of each item here.
 public:
+	std::mutex AccessGroup;
 	std::unordered_map<std::string, int> ItemsMap;
-	std::unordered_map<std::string, int> GroupsMap;
+	std::unordered_map<std::string, RegGroupLookup> KnownGroupsMap;
 
-	std::vector<RegItem*> AllItems;
-	std::vector<RegGroup*> AllGroups;
+	FixedPositionVector<RegItem*> AllItems;
+	FixedPositionVector<RegGroup*> LoadedGroups;
 };

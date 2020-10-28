@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationPipe.h" />
+    <ClInclude Include="FixedPositionVector.h" />
     <ClInclude Include="General.h" />
     <ClInclude Include="RegItem.h" />
     <ClInclude Include="RegSegment.h" />

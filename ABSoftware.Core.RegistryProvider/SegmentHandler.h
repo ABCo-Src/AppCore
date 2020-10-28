@@ -5,5 +5,6 @@
 namespace SegmentHandler
 {
 	RegSegment* GetOrLoadSegment(std::string& name);
+	RegItem* GetItemByPath();
 	RegSegment* SaveData();
 }

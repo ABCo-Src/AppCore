@@ -17,6 +17,9 @@ wchar_t* ConcatPipeLiteral(const wchar_t* with)
 
 CommunicationPipe::CommunicationPipe(bool& successful, const wchar_t* pipeName) 
 {
+    TextBuffer = std::string(0, '\0');
+    TextBuffer.reserve(255);
+
     // Add "\\.\pipe\" before the pipe's name.
     wchar_t* withPipeIdentifier = ConcatPipeLiteral(pipeName);
 
