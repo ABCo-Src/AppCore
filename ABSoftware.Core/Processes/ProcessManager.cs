@@ -85,6 +85,6 @@ namespace ABSoftware.Core.Processes
         }
 
         public static IEnumerator<Process> GetImmediateEnumerator() => ImmediateProcesses.GetEnumerator();
-        public static IEnumerator<Process> GetBackgroundEnumerator() => ImmediateProcesses.GetEnumerator();
+        public static IEnumerator<Process> GetBackgroundEnumerator() => BackgroundProcesses.GetEnumerator();
     }
 }
