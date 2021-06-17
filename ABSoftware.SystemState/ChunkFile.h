@@ -195,5 +195,4 @@ public:
 	bool ResizeObject(uint32_t* chunkPos, uint32_t previousChunkSize, uint32_t expectedChunkSize);
 	uint32_t CreateObject(uint32_t chunkSize);
 	void DeleteObject(uint32_t chunkPos, uint32_t chunkSize);
-
 };

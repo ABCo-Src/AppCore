@@ -10,8 +10,7 @@ enum class RegItemType : char
 	BlGroup = 3,
 
 	// Used by arrays:
-	Char = 4,
-	String = 5
+	String = 4
 };
 
 // Represents a simple item stored inline in a group
@@ -50,18 +49,13 @@ class RegArray : public RegObject
 {
 public:
 	RegItemType ItemType = (RegItemType)0;
-};
-
-class RegNonStringArray : public RegArray
-{
-public:
 	std::vector<DataPosition> Items;
 };
 
-class RegString : public RegArray
+class RegString : public RegObject
 {
 public:
-	std::vector<char> String;
+	std::vector<char> Data;
 };
 
 // Represents a group of items.
@@ -70,7 +64,6 @@ class RegGroup : public RegObject
 public:
 	std::vector<DataPosition> SubItems;
 	std::vector<DataPosition> SubGroups;
-
-	// Strings count as arrays.
+	std::vector<DataPosition> SubStrings;
 	std::vector<DataPosition> SubArrays;
 };

@@ -10,7 +10,7 @@ typedef CoreDataContainer<RegSimpleItem, 64> LoadedItemsContainer;
 // Since strings are used in the names of everything we expect them to be very common
 typedef CoreDataContainer<RegString, 128> LoadedStringsContainer;
 typedef CoreDataContainer<RegGroup, 16> LoadedGroupsContainer;
-typedef CoreDataContainer<RegNonStringArray, 8> LoadedArraysContainer;
+typedef CoreDataContainer<RegArray, 8> LoadedArraysContainer;
 
 class RegSegment
 {

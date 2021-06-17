@@ -212,14 +212,19 @@ uint32_t RegSegmentFileOperator::GetGroupDataSize(RegGroup& obj)
 void RegSegmentFileOperator::SaveGroupData(RegGroup& obj)
 {
 	// In big endian terms:
-	// Unused | Sub-Array Count (1 byte) | Sub-Group Count (1 byte) | Sub-Item Count (1 byte) 
+	// Sub-String Count (1 byte) | Sub-Array Count (1 byte) | Sub-Group Count (1 byte) | Sub-Item Count (1 byte) 
 	uint32_t header = 0;
 
-	header |= obj.SubArrays.size() >> 24;
-	header |= obj.SubGroups.size() >> 16;
-	header |= obj.SubItems.size() >> 8;
+	header |= obj.SubStrings.size() >> 16;
+	header |= obj.SubArrays.size() >> 16;
+	header |= obj.SubGroups.size() >> 8;
+	header |= obj.SubItems.size();
 
 	File.WriteInt32(header);
+
+	// Write sub-strings.
+	for (uint8_t i = 0; i < obj.SubGroups.size(); i++)
+		obj.SubGroups[i] = ReadAndCreateUnloadedObject<LoadedStringsContainer>(Parent->LoadedStrings);
 
 	// Write sub-arrays.
 	for (uint8_t i = 0; i < obj.SubArrays.size(); i++)
@@ -248,22 +253,11 @@ bool RegSegmentFileOperator::LoadArray(RegArray& arr)
 
 	if ((char)arr.ItemType > 5) return false;
 
-	uint32_t length = header & 0b00000000111111111111111111111111;
+	uint32_t length = header & 0x00FFFFFF;
 
-	if (arr.ItemType == RegItemType::Char)
-	{
-		RegString& str = (RegString&)arr;
-		str.String.reserve(length);
-		File.ReadBytes(str.String.data(), length);
-	}
-	else
-	{
-		RegNonStringArray& other = (RegNonStringArray&)arr;
-
-		other.Items.reserve(length);
-		for (uint32_t i = 0; i < length; i++)
-			if (!LoadSimpleItem(other.Items[i])) return false;
-	}
+	arr.Items.reserve(length);
+	for (uint32_t i = 0; i < length; i++)
+		if (!LoadSimpleItem(arr.Items[i])) return false;
 
 	arr.IsLoaded = true;
 	return true;
@@ -271,41 +265,53 @@ bool RegSegmentFileOperator::LoadArray(RegArray& arr)
 
 uint32_t RegSegmentFileOperator::GetArrayDataSize(RegArray& arr)
 {
-	if (arr.ItemType == RegItemType::Char)
-		return ((RegString&)arr).String.size();
-
-	RegNonStringArray& otherArr = (RegNonStringArray&)arr;
-	return otherArr.Items.size() * ((otherArr.ItemType == RegItemType::String) ? 4 : 8);
+	return arr.Items.size() * ((arr.ItemType == RegItemType::String) ? 4 : 8);
 }
 
 void RegSegmentFileOperator::SaveArrayData(RegArray& arr)
 {
 	arr.HasChanged = false;
 
-	// String
-	if (arr.ItemType == RegItemType::Char)
-	{
-		RegString& str = (RegString&)arr;
-		File.WriteInt32(((uint8_t)RegItemType::Char << 24) | str.String.size());
-		File.WriteBytes(str.String.data(), str.String.size());
-	}
-
 	// Other
-	else
-	{
-		RegNonStringArray& otherArr = (RegNonStringArray&)arr;
-		uint32_t header = ((uint8_t)arr.ItemType << 24) | otherArr.Items.size();
+	uint32_t header = ((uint8_t)arr.ItemType << 24) | arr.Items.size();
 		
-		// Sub-strings
-		if (arr.ItemType == RegItemType::String)
-			for (size_t i = 0; i < otherArr.Items.size(); i++)
-				SaveObjectPos<RegArray>(otherArr.Items[i], Parent->LoadedArrays);
+	// Sub-strings
+	if (arr.ItemType == RegItemType::String)
+		for (size_t i = 0; i < arr.Items.size(); i++)
+			SaveObjectPos<LoadedStringsContainer>(arr.Items[i], Parent->LoadedStrings);
 
-		// Sub-items
-		else
-			for (size_t i = 0; i < otherArr.Items.size(); i++)
-				SaveSimpleItemData(otherArr.Items[i]);
-	}
+	// Sub-items
+	else
+		for (size_t i = 0; i < arr.Items.size(); i++)
+			SaveSimpleItemData(arr.Items[i]);
+}
+
+// ===========
+// Strings
+// ===========
+
+bool RegSegmentFileOperator::LoadStr(RegString& str)
+{
+	File.JumpToChunk(str.CurrentFileChunk);
+
+	uint32_t length = File.ReadInt32();
+	str.Data.reserve(length);
+	File.ReadBytes(str.Data.data(), length);
+
+	return true;
+}
+
+uint32_t RegSegmentFileOperator::GetStringDataSize(RegString& arr)
+{
+	return arr.Data.size();
+}
+
+void RegSegmentFileOperator::SaveStringData(RegString& str)
+{
+	str.HasChanged = false;
+
+	File.WriteInt32(str.Data.size());
+	File.WriteBytes(str.Data.data(), str.Data.size());
 }
 
 // ===========
@@ -314,7 +320,7 @@ void RegSegmentFileOperator::SaveArrayData(RegArray& arr)
 bool RegSegmentFileOperator::LoadSimpleItem(DataPosition& res)
 {
 	RegSimpleItem& dest = Parent->LoadedItems.Emplace(res);
-	dest.Name = ReadAndCreateUnloadedObject<RegArray>(Parent->LoadedArrays);
+	dest.Name = ReadAndCreateUnloadedObject<LoadedArraysContainer>(Parent->LoadedArrays);
 	dest.Type = (RegItemType)File.ReadByte();
 
 	if ((char)dest.Type > 3) return false;
@@ -415,11 +421,11 @@ void RegSegmentFileOperator::HandleResizeObjectChunk(DataPosition objPos, RegObj
 			if (parent.HasChanged)
 			{
 				parent.ModifyLock.unlock();
-				UpdateArray(obj.Parent, (RegNonStringArray&)parent);
+				UpdateArray(obj.Parent, (RegArray&)parent);
 				return;
 			}
 
-			TweakChildPosInArray(obj.Parent, obj.CurrentFileChunk, (RegNonStringArray&)parent);
+			TweakChildPosInArray(obj.Parent, obj.CurrentFileChunk, (RegArray&)parent);
 		}
 		else
 		{
@@ -450,7 +456,7 @@ uint32_t FindPosInVector(std::vector<DataPosition>& vec, DataPosition target)
 	return -1;
 }
 
-void RegSegmentFileOperator::TweakChildPosInArray(DataPosition oldPos, uint32_t newPos, RegNonStringArray& arr)
+void RegSegmentFileOperator::TweakChildPosInArray(DataPosition oldPos, uint32_t newPos, RegArray& arr)
 {
 	uint32_t pos = FindPosInVector(arr.Items, oldPos);
 

@@ -85,16 +85,22 @@ public:
 	// ============
 	bool ShouldSkipDeleted(uint32_t pos, AddChangesType type);
 
-	void TweakChildPosInArray(DataPosition oldPos, uint32_t newPos, RegNonStringArray& arr);
+	void TweakChildPosInArray(DataPosition oldPos, uint32_t newPos, RegArray& arr);
 	void TweakArrayChildPosInGroup(DataPosition oldPos, uint32_t newPos, RegGroup& group);
 	void TweakGroupChildPosInGroup(DataPosition oldPos, uint32_t newPos, RegGroup& group);
 
 	uint32_t GetItemDataSize(RegSimpleItem& item);
 	void SaveSimpleItemData(DataPosition pos);
 
+	bool LoadArray(RegArray& dest);
 	uint32_t GetArrayDataSize(RegArray& arr);
 	void SaveArrayData(RegArray& arr);
 
+	bool LoadStr(RegString& dest);
+	uint32_t GetStringDataSize(RegString& str);
+	void SaveStringData(RegString& str);
+
+	bool LoadGroup(RegGroup& dest);
 	uint32_t GetGroupDataSize(RegGroup& obj);
 	void SaveGroupData(RegGroup& obj);
 
@@ -154,9 +160,6 @@ public:
 	bool HasDeletedItemsSinceLast = false;
 	std::unordered_map<uint32_t, AddChangesType> DeletedItemsSinceLast;
 	char* WriteBuffer = nullptr;
-
-	bool LoadGroup(RegGroup& dest);
-	bool LoadArray(RegArray& dest);
 
 	void Create(const std::filesystem::path& path);
 	bool Initialize(const std::filesystem::path& path);
