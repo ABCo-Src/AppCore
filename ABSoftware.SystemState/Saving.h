@@ -118,7 +118,7 @@ public:
 	DataPosition ReadAndCreateUnloadedObject(Container& containerToCreateInto)
 	{
 		DataPosition namePos;
-		RegArray& name = Parent->LoadedArrays.Emplace(namePos);
+		RegString& name = Parent->LoadedStrings.Emplace(namePos);
 		name.CurrentFileChunk = File.ReadInt32();
 		name.IsLoaded = false;
 
