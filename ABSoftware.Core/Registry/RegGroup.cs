@@ -113,6 +113,7 @@ namespace ABSoftware.Core.Registry
                         {
                             HasTrailingSlash = true
                         };
+                        
                         goto EndOfString;
                     }
 
