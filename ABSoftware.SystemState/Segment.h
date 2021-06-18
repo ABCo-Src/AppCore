@@ -28,11 +28,24 @@ public:
 	DataPosition RootGroup;
 
 	bool Initialize(const std::string& name);
+
+	RegString& GetLoadedStrName(DataPosition pos);
+	RegString& GetLoadedArrayName(DataPosition pos);
+	RegString& GetLoadedGroupName(DataPosition pos);
+	RegString& GetLoadedItemName(DataPosition pos);
+
+	RegString& GetLoadedStr(DataPosition pos);
+	RegArray& GetLoadedArray(DataPosition pos);
+	RegGroup& GetLoadedGroup(DataPosition pos);
+	RegSimpleItem& GetLoadedItem(DataPosition pos);
+
 	void TrackChange(DataPosition pos);
 
 	void Save();
 
 	RegSegment();
+private:
+	RegString& GetLoadedObjName(RegObject& obj);
 };
 
 namespace SegmentHandler

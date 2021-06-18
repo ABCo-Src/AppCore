@@ -65,12 +65,71 @@ void SegmentHandler::SaveAllSegments()
 		// SaveAllChanges this segment
 		//segment->SaveAllChanges();
 	}
-
 }
 
 RegSegment::RegSegment()
 {
 	File = new RegSegmentFileOperator(this);
+}
+
+
+bool RegSegment::Initialize(const std::string& name)
+{
+	return File->Initialize(SegmentsDirectory / name);
+}
+
+RegString& RegSegment::GetLoadedStrName(DataPosition pos)
+{
+	return GetLoadedObjName(LoadedStrings.Get(pos));
+}
+
+RegString& RegSegment::GetLoadedArrayName(DataPosition pos)
+{
+	return GetLoadedObjName(LoadedArrays.Get(pos));
+}
+
+RegString& RegSegment::GetLoadedGroupName(DataPosition pos)
+{
+	return GetLoadedObjName(LoadedGroups.Get(pos));
+}
+
+RegString& RegSegment::GetLoadedItemName(DataPosition pos)
+{
+	return GetLoadedStr(LoadedItems.Get(pos).Name);
+}
+
+RegString& RegSegment::GetLoadedStr(DataPosition pos)
+{
+	RegString& str = LoadedStrings.Get(pos);
+	if (!str.IsLoaded)
+		File->LoadStr(str);
+	return str;
+}
+
+RegArray& RegSegment::GetLoadedArray(DataPosition pos)
+{
+	RegArray& arr = LoadedArrays.Get(pos);
+	if (!arr.IsLoaded)
+		File->LoadArray(arr);
+	return arr;
+}
+
+RegGroup& RegSegment::GetLoadedGroup(DataPosition pos)
+{
+	RegGroup& group = LoadedGroups.Get(pos);
+	if (!group.IsLoaded)
+		File->LoadGroup(group);
+	return group;
+}
+
+RegSimpleItem& RegSegment::GetLoadedItem(DataPosition pos)
+{
+	return LoadedItems.Get(pos);
+}
+
+RegString& RegSegment::GetLoadedObjName(RegObject& obj)
+{
+	return GetLoadedStr(obj.Name);
 }
 
 void RegSegment::Save()
@@ -133,11 +192,6 @@ RegSegment* SegmentHandler::LoadSegment(std::string& name)
 	}
 
 	return res;
-}
-
-bool RegSegment::Initialize(const std::string& name)
-{
-	return File->Initialize(SegmentsDirectory / name);
 }
 
 void RegSegmentFileOperator::Create(const std::filesystem::path& name)
@@ -320,7 +374,7 @@ void RegSegmentFileOperator::SaveStringData(RegString& str)
 bool RegSegmentFileOperator::LoadSimpleItem(DataPosition& res)
 {
 	RegSimpleItem& dest = Parent->LoadedItems.Emplace(res);
-	dest.Name = ReadAndCreateUnloadedObject<LoadedArraysContainer>(Parent->LoadedArrays);
+	dest.Name = ReadAndCreateUnloadedObject<LoadedStringsContainer>(Parent->LoadedStrings);
 	dest.Type = (RegItemType)File.ReadByte();
 
 	if ((char)dest.Type > 3) return false;

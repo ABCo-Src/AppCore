@@ -44,7 +44,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateChunkFile)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -68,7 +68,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Single_End)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -102,7 +102,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(DeleteObject_Single_End)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -132,7 +132,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(DeleteObject_Multiple_End)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -162,7 +162,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Single_Middle)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -184,7 +184,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Multiple_End)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -200,7 +200,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Multiple_End_AcrossBytes)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -216,7 +216,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(DeleteObject_Multiple_End_AcrossBytes)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -244,7 +244,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Multiple_Middle)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -265,7 +265,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(CreateObject_Single_Middle_LotsOfBytes)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -287,7 +287,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(ResizeObject_Grow_End_SamePosition)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -305,7 +305,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(ResizeObject_Grow_Middle_SamePosition)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -327,7 +327,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(ResizeObject_Grow_Middle_DifferentPosition)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -351,7 +351,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(ResizeObject_Shrink)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -376,7 +376,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(Flush_DifferentRootChunkPos)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -404,7 +404,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(Flush_GrowFileInfoChunk_WithoutSecondMove)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -444,7 +444,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(Flush_GrowFileInfoChunk_WithSecondMove)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;
@@ -481,7 +481,7 @@ namespace SystemStateTests
 
 		TEST_METHOD(LoadFile)
 		{
-			CheckEndianness();
+			Setup();
 
 			// Create a new file.
 			ChunkFile file;

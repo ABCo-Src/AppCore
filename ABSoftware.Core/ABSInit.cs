@@ -45,6 +45,7 @@ namespace ABSoftware.Core
 
             if (args.Length < 2 || args[0] != "-appSegment") ABSLog.ThrowError("Unrecognized arguments.");
 
+            
             ABSGlobal.AppSegment = args[1];
         }
     }

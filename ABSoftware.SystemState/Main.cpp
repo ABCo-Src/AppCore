@@ -62,7 +62,7 @@ void HandleIncomingConnections()
     //}
 }
 
-void CheckEndianness()
+void Setup()
 {
     int endian_test = 0x00000001;
     IsLittleEndianSystem = (*(char*)&endian_test == 0x01) ? true : false;
@@ -70,7 +70,7 @@ void CheckEndianness()
 
 int main()
 {
-    CheckEndianness();
+    Setup();
     HandleConfigDirectory();
 
     if (!platform_supported)

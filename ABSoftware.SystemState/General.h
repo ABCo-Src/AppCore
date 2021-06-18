@@ -18,7 +18,7 @@ extern std::filesystem::path RegistryDirectory;
 extern std::filesystem::path SegmentsDirectory;
 extern bool IsLittleEndianSystem;
 
-void CheckEndianness();
+void Setup();
 void Crash(std::string errorMsg);
 
 template<typename T>
